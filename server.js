@@ -9,10 +9,6 @@ app.use(express.json())
 
 app.use(express.static(path.join(__dirname, "./public")))
 
-app.get('/', function(req,res) {
-    res.sendFile(path.resolve('public/index.html'))
-})
-
 var Rollbar = require('rollbar')
 var rollbar = new Rollbar ({
     accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
@@ -22,11 +18,15 @@ var rollbar = new Rollbar ({
 
 rollbar.log('Hello world!');
 
+app.get('/', function(req,res) {
+    res.sendFile(path.resolve('public/index.html'))
+})
+
 app.get('/api/robots', (req, res) => {
     try {
         res.status(200).send(bots)
         //rollbar for all bots requested
-        rollbar.log(`User viewed all bots`)
+        rollbar.info('User viewed all bots')
     } catch (error) {
         console.log('ERROR GETTING BOTS', error)
         res.sendStatus(400)
@@ -40,7 +40,7 @@ app.get('/api/robots/five', (req, res) => {
         let compDuo = shuffled.slice(6, 8)
         res.status(200).send({choices, compDuo})
         //rollbar log when draw button is clicked
-        rollbar.log(`Draw button clicked, five bots displayed`)
+        rollbar.log('Draw button clicked, five bots displayed')
     } catch (error) {
         console.log('ERROR GETTING FIVE BOTS', error)
         res.sendStatus(400)
@@ -69,7 +69,7 @@ app.post('/api/duel', (req, res) => {
             playerRecord.losses++
             res.status(200).send('You lost!')
             //rollbar event
-            rollbar.log(`Player lost the game`)
+            rollbar.log('Player lost the game')
         } else {
             playerRecord.losses++
             res.status(200).send('You won!')
