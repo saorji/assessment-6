@@ -1,9 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const app = express()
 const {bots, playerRecord} = require('./data')
 const {shuffleArray} = require('./utils')
-require('dotenv').config()
 
 app.use(express.json())
 
@@ -71,7 +71,7 @@ app.post('/api/duel', (req, res) => {
             //rollbar event
             rollbar.log('Player lost the game')
         } else {
-            playerRecord.losses++
+            playerRecord.wins++
             res.status(200).send('You won!')
             //rollbar event when game is lost
             rollbar.log('Player won the game')
